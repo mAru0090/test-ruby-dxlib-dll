@@ -1,0 +1,9 @@
+./system/**
+./system/lib/ruby/3.3.0/**
+./*.exe
+./*.wav
+./*.mp3
+./*.png
+./*.dll
+
+
