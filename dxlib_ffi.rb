@@ -28,5 +28,11 @@ module DxLibFFI
   extern "int dx_DrawExtendGraph(int,int,int,int,int,int)"
   extern "int dx_SetAlwaysRunFlag(int)"
   extern "int dx_SetMainWindowText(char*)"
+  extern "int dx_GetMousePoint(int*,int*)"
+  extern "int dx_SetDragFileValidFlag(int)"
+  extern "int dx_DragFileInfoClear(void)"
+  extern "int dx_GetDragFileNum(void)"
+  extern "int dx_GetDragFilePath(char*)"
+  extern "int dx_WaitTimer(int)"
 end
 
