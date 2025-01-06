@@ -34,5 +34,6 @@ module DxLibFFI
   extern "int dx_GetDragFileNum(void)"
   extern "int dx_GetDragFilePath(char*)"
   extern "int dx_WaitTimer(int)"
+  extern "int dx_SetWaitVSyncFlag(int)"
 end
 

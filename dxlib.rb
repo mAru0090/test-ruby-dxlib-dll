@@ -1,8 +1,7 @@
 require './dxlib_ffi'
 require './dxlib_const_variables'
-
 require 'objspace'
-
+require 'fps' 
 class DxLib
    def initialize()
         DxLibFFI::dx_DxLib_Init()
@@ -26,6 +25,7 @@ class DxLib
       @is_running = value
    end
    def run()
+      fps = FPS.new(60)
       while @is_running
           if DxLibFFI::dx_ProcessMessage() == -1 then
              @is_running = false
@@ -33,9 +33,13 @@ class DxLib
           end
           DxLibFFI::dx_ClsDrawScreen()
           @main_block.call if @main_block
-          DxLibFFI::dx_ScreenFlip()
-          # 60fpsのためにフレームを待機
-          sleep(1.0 / 60.0)
+ 
+          # 現在のFPSを表示
+          current_fps = fps.current_fps
+          DxLibFFI::dx_DrawString(0, 120, "FPS: #{current_fps}", DxLibFFI::dx_GetColor(255, 255, 255))
+    
+          DxLibFFI::dx_ScreenFlip()      
+          fps.wait
       end
     end
 end
