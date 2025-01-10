@@ -15,3 +15,181 @@ xcopy "E:\windows\dev-tools\Ruby33-x64\lib\ruby\3.3.0\rubygems\core_ext\" %COREE
 neriでexe化後、そもそもエラーが出るため、Ruby33以降じゃないとダメっぽい
 
 というか、他言語でRubyを埋め込みたい場合はmrubyを埋め込む方が安全で早いかも。
+
+
+
+class Main
+  def initialize(title)
+    @title = title
+    @x = 150
+    @y = 100
+    @window_width = 640
+    @window_height = 480
+    @cnt = 0
+    @image_width = 300
+    @image_height = 300
+    @is_vibrating = false # 振動状態フラグ
+    @vibration_done = false # 振動が一度だけ行われたかを記録するフラグ
+
+    # マウス位置
+    @p_mouse_x = Fiddle::Pointer.malloc(Fiddle::SIZEOF_INT) # int型のサイズ分のメモリを確保
+    @p_mouse_y = Fiddle::Pointer.malloc(Fiddle::SIZEOF_INT)
+
+    initialize1()
+    initialize2()
+  end
+
+  def initialize1()
+    DxLibFFI::dx_SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8)
+    DxLibFFI::dx_SetMainWindowText(@title)
+    DxLibFFI::dx_ChangeWindowMode(TRUE)
+    DxLibFFI::dx_SetWaitVSyncFlag(FALSE)
+  end
+
+  def initialize2()
+    @dxlib = DxLib.new()
+    DxLibFFI::dx_SetAlwaysRunFlag(TRUE)
+    DxLibFFI::dx_SetDrawScreen(DX_SCREEN_BACK)
+
+    DxLibFFI::dx_SetDragFileValidFlag(TRUE)
+    @snd = DxLibFFI::dx_LoadSoundMem("./ryokugan.wav")
+    @img = DxLibFFI::dx_LoadGraph("よくわかなすし.png")
+    DxLibFFI::dx_PlaySoundMem(@snd, 1)
+  end
+
+  def main()
+    @dxlib.main_loop {
+      # ESCキーで終了
+      if DxLibFFI::dx_CheckHitKey(1) == TRUE
+        @dxlib.is_running = false
+      end
+
+      # マウス座標を取得
+      DxLibFFI::dx_GetMousePoint(@p_mouse_x, @p_mouse_y)
+      mouse_x = @p_mouse_x[0, Fiddle::SIZEOF_INT].unpack1("i")
+      mouse_y = @p_mouse_y[0, Fiddle::SIZEOF_INT].unpack1("i")
+
+      # 画像の範囲にマウスがあるか判定
+      mouse_over_image = mouse_x.between?(@x, @x + @image_width) && mouse_y.between?(@y, @y + @image_height)
+
+      # 振動処理のリセットと開始
+      if mouse_over_image
+        if !@vibration_done
+          @is_vibrating = true
+        end
+      else
+        # マウスが画像から外れたらリセット
+        @is_vibrating = false
+        @vibration_done = false
+        @cnt = 0
+      end
+
+      # 振動処理
+      offset_x = 0
+      if @is_vibrating
+        angle = Math::PI / 10 # 振動の角度調整
+        offset_x = Math.cos(@cnt * angle) * 10 # 振動の幅
+        @cnt += 1
+        if @cnt >= 35 # 振動を一回で終了
+          @is_vibrating = false
+          @vibration_done = true
+        end
+      end
+
+      # 描画処理
+      DxLibFFI::dx_DrawExtendGraph(@x + offset_x, @y, @x + @image_width + offset_x, @y + @image_height, @img, TRUE)
+      DxLibFFI::dx_DrawString(0, 0, "mouseX: #{mouse_x} mouseY: #{mouse_y}", DxLibFFI::dx_GetColor(255, 255, 255))
+      DxLibFFI::dx_DrawString(0, 20, "Mouse Over: #{mouse_over_image}", DxLibFFI::dx_GetColor(255, 255, 255))
+      DxLibFFI::dx_DrawString(0, 40, "Vibrating: #{@is_vibrating}", DxLibFFI::dx_GetColor(255, 255, 255))
+      DxLibFFI::dx_DrawString(0, 60, "Vibration Done: #{@vibration_done}", DxLibFFI::dx_GetColor(255, 255, 255))
+    }
+    @dxlib.run
+  end
+end
+
+m = Main.new("DxLibテストタイトルーーーー").main
+
+
+
+
+
+
+
+
+
+
+
+
+$LOAD_PATH.unshift(File.expand_path('./'))
+require "dxlib"
+require "dxlib_wrap"
+
+class Main
+  include DxLib
+  def initialize(title)
+    @title = title
+    @x = 150
+    @y = 100
+    @trail = [] # 残像の位置を記録する配列
+
+    @max_trail_length = 10 # 残像の最大数
+    @trail_alpha_step = 25 # 残像の透明度の減少幅
+
+    initialize_dxlib()
+  end
+
+  def initialize_dxlib
+    SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8)
+    SetMainWindowText(@title)
+    ChangeWindowMode(TRUE)
+ 
+    @dxlib = DxLibWrap.new
+
+   SetAlwaysRunFlag(TRUE)
+    SetDrawScreen(DX_SCREEN_BACK)
+   SetDrawScreen(DX_SCREEN_BACK)
+
+    @img = LoadGraph("よくわかなすし.png") # サンプル画像
+  end
+
+  def main
+    @dxlib.main_loop do
+      # ESCキーで終了
+      if CheckHitKey(1) == TRUE
+        @dxlib.is_running = false
+      end
+
+      # マウス位置の取得
+      mouse_x = Fiddle::Pointer.malloc(Fiddle::SIZEOF_INT)
+      mouse_y = Fiddle::Pointer.malloc(Fiddle::SIZEOF_INT)
+      GetMousePoint(mouse_x, mouse_y)
+      #@x = mouse_x[0, Fiddle::SIZEOF_INT].unpack1("i")
+      #@y = mouse_y[0, Fiddle::SIZEOF_INT].unpack1("i")
+      @x += 5
+      @y -= 5
+      # 残像の位置を更新
+      @trail.unshift({ x: @x, y: @y }) # 現在位置を記録
+      @trail.pop if @trail.size > @max_trail_length # 最大数を超えたら古いものを削除
+
+      # 描画のクリア
+      #ClearDrawScreen()
+
+      # 残像を描画
+      @trail.each_with_index do |pos, i|
+        alpha = 255 - i * @trail_alpha_step # 透明度を徐々に減少
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha)
+        DrawExtendGraph(pos[:x], pos[:y], pos[:x] + 300, pos[:y] + 300, @img, TRUE)
+      end
+
+      # 通常描画
+      SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0)
+      DrawExtendGraph(@x, @y, @x + 300, @y + 300, @img, TRUE)
+
+      # 描画の更新
+      #ScreenFlip()
+    end
+    @dxlib.run
+  end
+end
+
+m = Main.new("残像エフェクト例2").main

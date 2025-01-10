@@ -1,12 +1,13 @@
 require "fiddle/import"
 require "fiddle"
+DXLIB_DLL_PATH = "./DxLib_x64.dll"
+
 
 # ライブラリのロード
 RubyInstaller::Runtime.add_dll_directory("./")
 module DxLibFFI
   extend Fiddle::Importer
-  dlload "./DxLib_x64.dll"
-  
+  dlload DXLIB_DLL_PATH 
   # 外部関数の定義
   extern "int dx_DxLib_Init(void)"
   extern "int dx_DxLib_End(void)"
@@ -35,5 +36,7 @@ module DxLibFFI
   extern "int dx_GetDragFilePath(char*)"
   extern "int dx_WaitTimer(int)"
   extern "int dx_SetWaitVSyncFlag(int)"
+  extern "int dx_SetDrawBlendMode(int,int)"
 end
+
 

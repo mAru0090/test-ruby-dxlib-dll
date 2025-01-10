@@ -1,8 +1,8 @@
-$LOAD_PATH.unshift(File.expand_path('./'))
-require "dxlib_ffi"
+require "dxlib"
 
 
 class FPS
+  include DxLib
   def initialize(fps)
     @fps = fps
     @interval = 1000 / fps # FPSから1フレームあたりの待機時間（ミリ秒）
@@ -29,7 +29,7 @@ class FPS
     remaining_time = @interval - elapsed_time
 
     if remaining_time > 0
-      DxLibFFI::dx_WaitTimer(remaining_time.to_i)
+      wait_timer(remaining_time.to_i)
     end
 
     @last_time = Time.now # 時間をリセット
