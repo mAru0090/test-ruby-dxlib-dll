@@ -1,5 +1,10 @@
 # すべて無視する
 /*
+# 特定のファイルを追跡対象にする
+!./example/*
+!./dxlib-ruby/*
+!./example/*.rb
+!./dxlib-ruby/*.rb
 
 
 
@@ -14,11 +19,6 @@
 ./*.dll
 
 
-# 特定のファイルを追跡対象にする
-!./example/*
-!./dxlib-ruby/*
-!./example/*.rb
-!./dxlib-ruby/*.rb
 
 !./*.rb
 !./*.bat
