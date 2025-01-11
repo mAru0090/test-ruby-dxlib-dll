@@ -1,29 +1,30 @@
+
 # すべて無視する
 /*
-# 特定のファイルを追跡対象にする
-!./example/*
-!./dxlib-ruby/*
-!./example/*.rb
-!./dxlib-ruby/*.rb
-
-
-
-!/system/*
+!/system/
 !/system/**
 
+# すべてのフォルダを無視するが、特定フォルダを例外指定
+!dxlib-ruby/
+!example/
 
-./*.exe
-./*.wav
-./*.mp3
-./*.png
-./*.dll
+# フォルダ内のすべてを無視しないようにする
+!dxlib-ruby/**
+!example/**
 
+# 拡張子で無視
+*.exe
+*.wav
+*.mp3
+*.png
+*.dll
 
+# 特定ファイル形式は無視しない
+!*.rb
+!*.bat
+!*.txt
+!*.yml
+!*.toml
 
-!./*.rb
-!./*.bat
-!./*.txt
-!./*.yml
-!./*.toml
-# 例外として無視しないファイルを指定
+# 例外として特定ファイルを指定
 !./.gitignore
