@@ -2,7 +2,7 @@ $LOAD_PATH.unshift(File.expand_path('..', __FILE__))
 require "dxlib_ffi"
 module DxLib
   def self.create_method(original_name)
-    # dx_DxLib_Init と dx_DxLib_End をスキップ
+    # 一部自前で定義するためスキップ
     return if ["dx_DxLib_Init", "dx_DxLib_End","dx_SetWaitVsyncFlag"].include?(original_name.to_s)
     # メソッド名を変換し、先頭の不要な'_'を削除
     new_name = original_name.to_s.sub(/^dx_/, '').gsub(/([A-Z])/, '_\1').downcase.sub(/^_/, '')
