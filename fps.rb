@@ -1,4 +1,4 @@
-require "dxlib"
+require "dxlib-ruby/dxlib"
 
 
 class FPS
