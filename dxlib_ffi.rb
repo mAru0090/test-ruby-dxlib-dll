@@ -37,6 +37,14 @@ module DxLibFFI
   extern "int dx_WaitTimer(int)"
   extern "int dx_SetWaitVSyncFlag(int)"
   extern "int dx_SetDrawBlendMode(int,int)"
+  extern "int dx_MakeKeyInput(int,int,int,int)"
+  extern "int dx_DrawKeyInputString(int,int,int)"
+  extern "int dx_SetActiveKeyInput(int)"
+  extern "int dx_CheckKeyInput(int)"
+  extern "int dx_DrawKeyInputModeString(int,int)"
+  extern "int dx_InitKeyInput(void)"
+  extern "int dx_GetKeyInputString(char*,int)"
+  extern "int dx_DrawBox(int,int,int,int,int,int)"
 end
 
 
