@@ -15,15 +15,15 @@
 
 
 # 特定のファイルを追跡対象にする
-!/example/*
-!/dxlib-ruby/*
-!/example/*.rb
-!/dxlib-ruby/*.rb
+!./example/*
+!./dxlib-ruby/*
+!./example/*.rb
+!./dxlib-ruby/*.rb
 
-!/*.rb
-!/*.bat
-!/*.txt
-!/*.yml
-!/*.toml
+!./*.rb
+!./*.bat
+!./*.txt
+!./*.yml
+!./*.toml
 # 例外として無視しないファイルを指定
-!/.gitignore
+!./.gitignore
