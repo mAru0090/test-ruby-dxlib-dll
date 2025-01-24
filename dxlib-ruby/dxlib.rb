@@ -45,6 +45,10 @@ module DxLib
   end
 end
 
+
+
+# debug用
+=begin
 # DxLibFFIの関数を列挙して表示
 # puts "Available methods in DxLibFFI:"
 DxLibFFI.methods(false).grep(/^dx_/).each do |method|
@@ -56,3 +60,4 @@ end
 DxLib.instance_methods(false).each do |method|
   # puts method.to_s
 end
+=end
