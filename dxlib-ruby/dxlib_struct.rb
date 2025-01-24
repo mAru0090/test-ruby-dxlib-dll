@@ -1,172 +1,153 @@
-require 'fiddle'
-require 'fiddle/import'
-require 'fiddle/types'
+class RECT < FFI::Struct
+  layout :left, :long,
+         :top, :long,
+         :right, :long,
+         :bottom, :long
+end
 
-module DxLibStructs
-  extend Fiddle::Importer
-  include Fiddle::Types
-  INT = Fiddle::SIZEOF_INT
+class VECTOR < FFI::Struct
+  layout(
+    :x, :float,
+    :y, :float,
+    :z, :float
+  )
 
-  # RECT構造体
-  class RECT < Fiddle::CStruct
-    layout(
-      :left, INT,
-      :top, INT,
-      :right, INT,
-      :bottom, INT
-    )
-  end
-
-  # VECTOR構造体
-  class VECTOR < Fiddle::CStruct
-    layout(
-      :x, FLOAT,
-      :y, FLOAT,
-      :z, FLOAT
-    )
-
-    # 演算子オーバーロード (加算)
-    def +(other)
-      VECTOR.malloc.tap do |result|
-        result.x = self.x + other.x
-        result.y = self.y + other.y
-        result.z = self.z + other.z
-      end
-    end
-
-    # 演算子オーバーロード (減算)
-    def -(other)
-      VECTOR.malloc.tap do |result|
-        result.x = self.x - other.x
-        result.y = self.y - other.y
-        result.z = self.z - other.z
-      end
-    end
-
-    # Clone メソッド
-    def clone
-      VECTOR.malloc.tap do |result|
-        result.x = self.x
-        result.y = self.y
-        result.z = self.z
-      end
+  # 演算子オーバーロード (加算)
+  def +(other)
+    VECTOR.malloc.tap do |result|
+      result.x = x + other.x
+      result.y = y + other.y
+      result.z = z + other.z
     end
   end
 
-  # COLOR_U8構造体
-  class COLOR_U8 < Fiddle::CStruct
-    layout(
-      :a, UINT8,
-      :r, UINT8,
-      :g, UINT8,
-      :b, UINT8
-    )
+  # 演算子オーバーロード (減算)
+  def -(other)
+    VECTOR.malloc.tap do |result|
+      result.x = x - other.x
+      result.y = y - other.y
+      result.z = z - other.z
+    end
   end
 
-  # COLOR_F構造体
-  class COLOR_F < Fiddle::CStruct
-    layout(
-      :a, FLOAT,
-      :r, FLOAT,
-      :g, FLOAT,
-      :b, FLOAT
-    )
+  # Clone メソッド
+  def clone
+    VECTOR.malloc.tap do |result|
+      result.x = x
+      result.y = y
+      result.z = z
+    end
   end
+end
 
-  # MATERIALPARAM構造体
-  class MATERIALPARAM < Fiddle::CStruct
-    layout(
-      :Diffuse, COLOR_F,
-      :Ambient, COLOR_F,
-      :Specular, COLOR_F,
-      :Emissive, COLOR_F,
-      :Power, FLOAT
-    )
-  end
+class COLOR_U8 < FFI::Struct
+  layout(
+    :a, :uint8,
+    :r, :uint8,
+    :g, :uint8,
+    :b, :uint8
+  )
+end
 
-  # VERTEX3D構造体
-  class VERTEX3D < Fiddle::CStruct
-    layout(
-      :pos, VECTOR,
-      :norm, VECTOR,
-      :dif, COLOR_U8,
-      :spc, COLOR_U8,
-      :u, FLOAT,
-      :v, FLOAT,
-      :su, FLOAT,
-      :sv, FLOAT
-    )
-  end
+class COLOR_F < FFI::Struct
+  layout(
+    :a, :float,
+    :r, :float,
+    :g, :float,
+    :b, :float
+  )
+end
 
-  # HITRESULT_LINE構造体
-  class HITRESULT_LINE < Fiddle::CStruct
-    layout(
-      :HitFlag, INT,
-      :Position, VECTOR
-    )
-  end
+class MATERIALPARAM < FFI::Struct
+  layout(
+    :Diffuse, COLOR_F,
+    :Ambient, COLOR_F,
+    :Specular, COLOR_F,
+    :Emissive, COLOR_F,
+    :Power, :float
+  )
+end
 
-  # DATEDATA構造体
-  class DATEDATA < Fiddle::CStruct
-    layout(
-      :Year, INT,
-      :Mon, INT,
-      :Day, INT,
-      :Hour, INT,
-      :Min, INT,
-      :Sec, INT
-    )
-  end
+class VERTEX3D < FFI::Struct
+  layout(
+    :pos, VECTOR,
+    :norm, VECTOR,
+    :dif, COLOR_U8,
+    :spc, COLOR_U8,
+    :u, :float,
+    :v, :float,
+    :su, :float,
+    :sv, :float
+  )
+end
 
-  # XAUDIO2FX_REVERB_PARAMETERS構造体
-  class XAUDIO2FX_REVERB_PARAMETERS < Fiddle::CStruct
-    layout(
-      :WetDryMix, FLOAT,
-      :ReflectionsDelay, UINT32,
-      :ReverbDelay, UINT8,
-      :RearDelay, UINT8,
-      :PositionLeft, UINT8,
-      :PositionRight, UINT8,
-      :PositionMatrixLeft, UINT8,
-      :PositionMatrixRight, UINT8,
-      :EarlyDiffusion, UINT8,
-      :LateDiffusion, UINT8,
-      :LowEQGain, UINT8,
-      :LowEQCutoff, UINT8,
-      :HighEQGain, UINT8,
-      :HighEQCutoff, UINT8,
-      :RoomFilterFreq, FLOAT,
-      :RoomFilterMain, FLOAT,
-      :RoomFilterHF, FLOAT,
-      :ReflectionsGain, FLOAT,
-      :ReverbGain, FLOAT,
-      :DecayTime, FLOAT,
-      :Density, FLOAT,
-      :RoomSize, FLOAT
-    )
-  end
+class HITRESULT_LINE < FFI::Struct
+  layout(
+    :HitFlag, :int,
+    :Position, VECTOR
+  )
+end
 
-  # IPDATA構造体
-  class IPDATA < Fiddle::CStruct
-    layout(
-      :d1, UINT8,
-      :d2, UINT8,
-      :d3, UINT8,
-      :d4, UINT8
-    )
-  end
+# DATEDATA構造体
+class DATEDATA < FFI::Struct
+  layout(
+    :Year, :int,
+    :Mon, :int,
+    :Day, :int,
+    :Hour, :int,
+    :Min, :int,
+    :Sec, :int
+  )
+end
 
-  # MATRIX構造体
-  class MATRIX < Fiddle::CStruct
-    layout(
-      :m, [FLOAT, 4 * 4] # 4x4行列
-    )
+# XAUDIO2FX_REVERB_PARAMETERS構造体
+class XAUDIO2FX_REVERB_PARAMETERS < FFI::Struct
+  layout(
+    :WetDryMix, :float,
+    :ReflectionsDelay, :uint32,
+    :ReverbDelay, :uint8,
+    :RearDelay, :uint8,
+    :PositionLeft, :uint8,
+    :PositionRight, :uint8,
+    :PositionMatrixLeft, :uint8,
+    :PositionMatrixRight, :uint8,
+    :EarlyDiffusion, :uint8,
+    :LateDiffusion, :uint8,
+    :LowEQGain, :uint8,
+    :LowEQCutoff, :uint8,
+    :HighEQGain, :uint8,
+    :HighEQCutoff, :uint8,
+    :RoomFilterFreq, :float,
+    :RoomFilterMain, :float,
+    :RoomFilterHF, :float,
+    :ReflectionsGain, :float,
+    :ReverbGain, :float,
+    :DecayTime, :float,
+    :Density, :float,
+    :RoomSize, :float
+  )
+end
 
-    # Clone メソッド
-    def clone
-      MATRIX.malloc.tap do |result|
-        result.m = self.m
-      end
+# IPDATA構造体
+class IPDATA < FFI::Struct
+  layout(
+    :d1, :uint8,
+    :d2, :uint8,
+    :d3, :uint8,
+    :d4, :uint8
+  )
+end
+
+# MATRIX構造体
+class MATRIX < FFI::Struct
+  layout(
+    :m, [:float, 4 * 4] # 4x4行列
+  )
+
+  # Clone メソッド
+  def clone
+    MATRIX.malloc.tap do |result|
+      result.m = m
     end
   end
 end

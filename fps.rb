@@ -1,4 +1,4 @@
-require "dxlib-ruby/dxlib"
+require 'dxlib-ruby/dxlib'
 
 
 class FPS
@@ -28,9 +28,7 @@ class FPS
     elapsed_time = (Time.now - @last_time) * 1000 # 経過時間（ミリ秒）
     remaining_time = @interval - elapsed_time
 
-    if remaining_time > 0
-      wait_timer(remaining_time.to_i)
-    end
+    wait_timer(remaining_time.to_i) if remaining_time > 0
 
     @last_time = Time.now # 時間をリセット
     @frame_count += 1 # フレームカウントをインクリメント

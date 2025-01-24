@@ -1,70 +1,80 @@
-require "fiddle/import"
-require "fiddle"
-
-DXLIB_DLL_NAME = "DxLib_x64.dll"
+require 'ffi'
+DXLIB_DLL_NAME = 'DxLib_x64.dll'
 
 # ライブラリのロード
-RubyInstaller::Runtime.add_dll_directory("./")
-RubyInstaller::Runtime.add_dll_directory("./dll/")
-module DxLibFFI
-  extend Fiddle::Importer
-  dlload DXLIB_DLL_NAME
+RubyInstaller::Runtime.add_dll_directory('./')
+RubyInstaller::Runtime.add_dll_directory('./dll/')
 
-  # 既存の関数
-  extern "int dx_DxLib_Init(void)"
-  extern "int dx_DxLib_End(void)"
-  extern "int dx_ChangeWindowMode(int)"
-  extern "int dx_ProcessMessage(void)"
-  extern "int dx_GetColor(int, int, int)"
-  extern "int dx_DrawString(int, int, char*, int)"
-  extern "int dx_SetUseCharCodeFormat(int)"
-  extern "int dx_ScreenFlip(void)"
-  extern "int dx_SetDrawScreen(int)"
-  extern "int dx_ClsDrawScreen(void)"
-  extern "int dx_ClearDrawScreen(void)"
-  extern "int dx_LoadSoundMem(char*)"
-  extern "int dx_PlaySoundMem(int, int)"
-  extern "int dx_LoadGraph(char*)"
-  extern "int dx_DeleteGraph(int)"
-  extern "int dx_DrawGraph(int, int, int, int)"
-  extern "int dx_CheckHitKey(int)"
-  extern "int dx_DrawExtendGraph(int, int, int, int, int, int)"
-  extern "int dx_SetAlwaysRunFlag(int)"
-  extern "int dx_SetMainWindowText(char*)"
-  extern "int dx_GetMousePoint(int*, int*)"
-  extern "int dx_SetDragFileValidFlag(int)"
-  extern "int dx_DragFileInfoClear(void)"
-  extern "int dx_GetDragFileNum(void)"
-  extern "int dx_GetDragFilePath(char*)"
-  extern "int dx_WaitTimer(int)"
-  extern "int dx_WaitKey(void)"
-  extern "int dx_SetWaitVSyncFlag(int)"
-  extern "int dx_SetDrawBlendMode(int, int)"
-  extern "int dx_MakeKeyInput(int, int, int, int)"
-  extern "int dx_DrawKeyInputString(int, int, int)"
-  extern "int dx_SetActiveKeyInput(int)"
-  extern "int dx_CheckKeyInput(int)"
-  extern "int dx_DrawKeyInputModeString(int, int)"
-  extern "int dx_DrawKeyInputString(int, int, int)"
-  extern "int dx_InitKeyInput(void)"
-  extern "int dx_DeleteKeyInput(int)"
-  extern "int dx_GetKeyInputString(char*, int)"
-  extern "int dx_DrawBox(int, int, int, int, int, int)"
-  extern "int dx_KeyInputString(int, int, int, char*, int)"
-  extern "int dx_KeyInputSingleCharString(int, int, int, char*, int)"
-  extern "int dx_KeyInputNumber(int, int, int, int, int)"
-  extern "int dx_SetKeyInputStringColor(int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int)"
-  extern "int dx__GetSystemInfo(int*, int*, int*)"
-  extern "void* dx_DxAlloc(size_t, const char*, int)"
-  extern "void* dx_DxCalloc(size_t, const char*, int)"
-  extern "void* dx_DxRealloc(void*, size_t, const char*, int)"
-  extern "void dx_DxFree(void*)"
-  extern "size_t dx_DxSetAllocSizeTrap(size_t)"
-  extern "int dx_DxSetAllocPrintFlag(int)"
-  extern "size_t dx_DxGetAllocSize(void)"
-  extern "int dx_DxGetAllocNum(void)"
-  extern "void dx_DxDumpAlloc(void)"
-  extern "int dx_DxErrorCheckAlloc(void)"
-  extern "int dx_DxSetAllocSizeOutFlag(int)"
-  extern "int dx_DxSetAllocMemoryErrorCheckFlag(int)"
+module DxLibFFI
+  extend FFI::Library
+
+  # DxLib_x64.dllのロード
+  ffi_lib DXLIB_DLL_NAME
+
+  # 関数宣言
+  attach_function :dx_DxLib_Init, [], :int
+  attach_function :dx_DxLib_End, [], :int
+  attach_function :dx_ChangeWindowMode, [:int], :int
+  attach_function :dx_ProcessMessage, [], :int
+  attach_function :dx_GetColor, %i[int int int], :int
+  attach_function :dx_DrawString, %i[int int pointer int], :int
+  attach_function :dx_SetUseCharCodeFormat, [:int], :int
+  attach_function :dx_ScreenFlip, [], :int
+  attach_function :dx_SetDrawScreen, [:int], :int
+  attach_function :dx_ClsDrawScreen, [], :int
+  attach_function :dx_ClearDrawScreen, [:pointer], :int
+
+  attach_function :dx_LoadSoundMem, [:string], :int
+  attach_function :dx_PlaySoundMem, %i[int int], :int
+  attach_function :dx_LoadGraph, [:string], :int
+  attach_function :dx_DeleteGraph, [:int], :int
+  attach_function :dx_DrawGraph, %i[int int int int], :int
+  attach_function :dx_CheckHitKey, [:int], :int
+  attach_function :dx_DrawExtendGraph, %i[int int int int int int], :int
+  attach_function :dx_SetAlwaysRunFlag, [:int], :int
+  attach_function :dx_SetMainWindowText, [:string], :int
+  attach_function :dx_GetMousePoint, %i[pointer pointer], :int
+  attach_function :dx_SetDragFileValidFlag, [:int], :int
+  attach_function :dx_DragFileInfoClear, [], :int
+  attach_function :dx_GetDragFileNum, [], :int
+  attach_function :dx_GetDragFilePath, [:string], :int
+  attach_function :dx_WaitTimer, [:int], :int
+  attach_function :dx_WaitKey, [], :int
+  attach_function :dx_SetWaitVSyncFlag, [:int], :int
+  attach_function :dx_SetDrawBlendMode, %i[int int], :int
+  attach_function :dx_MakeKeyInput, %i[int int int int], :int
+  attach_function :dx_DrawKeyInputString, %i[int int int], :int
+  attach_function :dx_SetActiveKeyInput, [:int], :int
+  attach_function :dx_CheckKeyInput, [:int], :int
+  attach_function :dx_DrawKeyInputModeString, %i[int int], :int
+  attach_function :dx_DrawKeyInputString, %i[int int int], :int
+  attach_function :dx_InitKeyInput, [], :int
+  attach_function :dx_DeleteKeyInput, [:int], :int
+  attach_function :dx_GetKeyInputString, %i[pointer int], :int
+  attach_function :dx_DrawBox, %i[int int int int int int], :int
+  attach_function :dx_KeyInputString, %i[int int int pointer int], :int
+  attach_function :dx_KeyInputSingleCharString, %i[int int int pointer int], :int
+  attach_function :dx_KeyInputNumber, %i[int int int int int], :int
+  attach_function :dx_SetKeyInputStringColor, %i[
+    int int int int int int int int int int int int int int int int int
+  ], :int
+  attach_function :dx__GetSystemInfo, %i[pointer pointer pointer], :int
+  attach_function :dx_DxAlloc, %i[size_t string int], :pointer
+  attach_function :dx_DxCalloc, %i[size_t string int], :pointer
+  attach_function :dx_DxRealloc, %i[pointer size_t string int], :pointer
+  attach_function :dx_DxFree, [:pointer], :void
+  attach_function :dx_DxSetAllocSizeTrap, [:size_t], :size_t
+  attach_function :dx_DxSetAllocPrintFlag, [:int], :int
+  attach_function :dx_DxGetAllocSize, [], :size_t
+  attach_function :dx_DxGetAllocNum, [], :int
+  attach_function :dx_DxDumpAlloc, [], :void
+  attach_function :dx_DxErrorCheckAlloc, [], :int
+  attach_function :dx_DxSetAllocSizeOutFlag, [:int], :int
+  attach_function :dx_DxSetAllocMemoryErrorCheckFlag, [:int], :int
+  attach_function :dx_GetDrawStringWidth, %i[pointer int], :int
+  attach_function :dx_SetFontSize, [:int], :int
+  attach_function :dx_GetFontSize, [], :int
+  attach_function :dx_ChangeFont, [:string], :int
+  attach_function :dx_GetFontSizeToHandle, [:int], :int
+  attach_function :dx_SetGraphMode, %i[int int int int], :int
 end
