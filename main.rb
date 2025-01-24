@@ -39,6 +39,7 @@ class Game
   def loop(&main_block)
     @main_block = main_block
 
+
     while @is_running
       if process_message == -1
         @is_running = false
